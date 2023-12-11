@@ -598,6 +598,7 @@ int main() {
     std::cout << "Fibonacci number at position " << n << " is: " << fibonacci(n) << std::endl;
     return 0;
 }
+```
 
 ## Classes and Objects in C++
 
@@ -665,4 +666,130 @@ private:
         }
     }
 };
+```
 
+## Inheritance and Polymorphism
+
+Inheritance and polymorphism are fundamental concepts in object-oriented programming that allow for more flexible and reusable code.
+
+### Pros and Cons
+
+**Pros:**
+- **Reusability:** Inheritance allows the reuse of existing code.
+- **Extensibility:** It's easy to add new features or modify existing ones.
+- **Polymorphism:** Enables objects to be treated as instances of their base class, increasing flexibility.
+
+**Cons:**
+- **Tight Coupling:** Changes in the base class can impact derived classes.
+- **Complexity:** Can increase complexity and lead to maintenance challenges.
+- **Overhead:** Polymorphism can introduce runtime overhead.
+
+### Class Hierarchies
+
+- **Base Class (Superclass / Parent Class):** The class from which other classes inherit features.
+
+  ```cpp
+  class Animal {
+  public:
+      virtual void speak() = 0; // Pure Virtual Function
+  };
+  ```
+
+- **Derived Class (Subclass / Child Class):** Inherits from the base class and can add new attributes and methods or modify existing ones.
+
+```cpp
+class Dog : public Animal {
+public:
+    void speak() override {
+        std::cout << "Woof!" << std::endl;
+    }
+};
+```
+
+### Access
+- **Public:** Members are accessible from anywhere.
+- **Private:** Members are only accessible within the class itself.
+- **Protected:** Members are accessible in the class and its subclasses.
+- **Data Members / Member Functions / Constructors**
+Can have different access specifiers.
+
+Constructors of the base class can be called explicitly in the derived class's constructor.
+```cpp
+class Base {
+protected:
+    int value;
+public:
+    Base(int v) : value(v) {}
+};
+
+class Derived : public Base {
+public:
+    Derived(int v) : Base(v) {}
+};
+```
+- **const Member Functions**
+Do not modify the object on which they are called.
+```cpp
+class MyClass {
+public:
+    void myFunc() const {
+        // Cannot modify any member variables here
+    }
+};
+```
+- **Overriding Methods**
+Virtual Functions: Allow derived classes to override methods from the base class.
+
+```cpp
+class Base {
+public:
+    virtual void func() {
+        std::cout << "Base function" << std::endl;
+    }
+};
+
+class Derived : public Base {
+public:
+    void func() override {
+        std::cout << "Derived function" << std::endl;
+    }
+};
+```
+### When to Use Virtual and Pure Virtual Functions
+- **Virtual Functions:** When you want to allow a function in a derived class to override a base class function.
+- **Pure Virtual Functions:** When you want to create a class that only serves as a base class and requires that certain methods are implemented in derived classes.
+
+### Types of Polymorphism
+- **Ad-Hoc (Function Overloading):** Functions with the same name but different parameters.
+- **Subtyping (Using Derived Class in Place of Base Class):** Allows the use of a derived class object wherever a base class object is expected.
+```cpp
+void useAnimal(Animal &animal) {
+    animal.speak();
+}
+```
+
+- **Parametric (Templates):** Allows classes and functions to operate with generic types.
+```cpp
+template <typename T>
+  class MyClass {
+      T data;
+  };
+```
+
+### Handling Abstract Classes in Collections
+- **Abstract Class Vector/List:** To hold elements of an abstract class, use pointers (or smart pointers) to the base class.
+```cpp
+  std::vector<Animal*> animals;
+  animals.push_back(new Dog());
+  animals.push_back(new Cat());
+  // Remember to delete objects to avoid memory leaks
+```
+- **Same Base Class Vector/List:** To hold elements that share the same base class, again use pointers (or smart pointers) to the base class.
+```cpp
+std::vector<BaseClass*> objects;
+objects.push_back(new DerivedClass1());
+objects.push_back(new DerivedClass2());
+// Use smart pointers for automatic memory management
+```
+
+  
