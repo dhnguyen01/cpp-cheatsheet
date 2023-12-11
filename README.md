@@ -792,4 +792,241 @@ objects.push_back(new DerivedClass2());
 // Use smart pointers for automatic memory management
 ```
 
-  
+### String Class
+```cpp
+#include <iostream>
+# include <fstream>
+# include <tuple>
+# include <limits>
+# include <stdexcept>
+#include "MyString.h"
+
+
+MyString::MyString() {
+    m_Size = 0;
+    m_Capacity = m_Size + 1;
+    m_Buffer = new char[1];
+    m_Buffer[0] = '\0';
+}
+
+MyString::MyString(const char* string) {
+    if (string == nullptr) {
+        m_Size = 0;
+        m_Buffer = new char[1];
+        m_Buffer[0] = '\0';
+    } else {
+        m_Size = 0;
+        while (string[m_Size] != '\0') {
+            m_Size++;
+        }
+
+        m_Buffer = new char[m_Size + 1];
+        for (size_t i = 0; i < m_Size; ++i)
+            m_Buffer[i] = string[i];
+        m_Buffer[m_Size] = '\0';
+    }
+    m_Capacity = m_Size + 1;
+}
+
+
+MyString::~MyString() {
+    delete[] m_Buffer;
+}
+
+MyString::MyString(const MyString& other) : m_Size(other.m_Size), m_Capacity(other.m_Capacity) {
+    m_Buffer = new char[m_Size + 1];
+    for (size_t i = 0; i < m_Size; ++i) 
+        m_Buffer[i] = other.m_Buffer[i];
+    m_Buffer[m_Size] = '\0';
+}
+
+MyString& MyString::operator=(const MyString& other) {
+    if (this != &other) {
+        delete[] m_Buffer;
+        m_Size = other.m_Size;
+        m_Capacity = m_Size + 1;
+        m_Buffer = new char[m_Size + 1];
+        for (size_t i = 0; i < m_Size; ++i) 
+            m_Buffer[i] = other.m_Buffer[i];
+        m_Buffer[m_Size] = '\0'; 
+    }
+    return *this;
+}
+
+
+std::ostream& operator<<(std::ostream& stream, const MyString& string) {
+    stream << string.m_Buffer;
+    return stream;
+}
+
+void MyString::resize(size_t n) {
+    m_Size = n;
+    if (n < m_Size) {
+        m_Buffer[n] = '\0';
+    } else if (n > m_Size) {
+        char* newBuffer = new char[n + 1];
+        for (size_t i = 0; i < m_Size; ++i) {
+            newBuffer[i] = m_Buffer[i];
+        }
+        for (size_t i = m_Size; i < n; ++i) {
+            newBuffer[i] = '\0';
+        }
+        newBuffer[n] = '\0';
+        delete[] m_Buffer;
+        m_Buffer = newBuffer;
+    }
+}
+
+size_t MyString::size() const {
+    return m_Size;
+}
+
+size_t MyString::length() const {
+    return m_Size;
+}
+
+const char* MyString::data() const {
+    return m_Buffer;
+}
+
+bool MyString::empty() const {
+    return m_Size == 0;
+}
+
+const char& MyString::at(size_t pos) const {
+    if (pos >= m_Size) {
+        throw std::out_of_range("Index out of range");
+    }
+    return m_Buffer[pos];
+}
+
+const char& MyString::front() const {
+    return *m_Buffer;
+}
+
+void MyString::clear() noexcept {
+    delete[] m_Buffer;
+    m_Size = 0;
+    m_Buffer = new char[1];
+    m_Buffer[0] = '\0';
+}
+
+MyString& MyString::operator+=(const MyString& other) {
+    size_t oldSize = this->size();
+    m_Size = oldSize + other.size();
+
+    char* newBuffer = new char[m_Size + 1];
+
+    for (size_t i = 0; i < oldSize; ++i) {
+        newBuffer[i] = m_Buffer[i];
+    }
+
+    for (size_t i = 0; i < other.size(); ++i) {
+        newBuffer[oldSize + i] = other.m_Buffer[i];
+    }
+
+    newBuffer[m_Size] = '\0';
+
+    delete[] m_Buffer;
+    m_Buffer = newBuffer;
+
+    return *this;
+}
+
+size_t MyString::find(const MyString& str, size_t pos) const noexcept {
+    if (str.length() == 0 || str.length() > this->length() - pos) {
+        return std::string::npos;
+    }
+    
+    bool isSubstr = true;
+    for (size_t i = pos; i <= this->length() - str.length(); ++i) {
+        for (size_t j = 0; j < str.length(); ++j) {
+            if (this->at(i + j) != str.at(j)) {
+                isSubstr = false;
+                break;
+            }
+        }
+        if (isSubstr) return i;
+        isSubstr = true;
+    }
+    return std::string::npos;
+}
+
+size_t MyString::capacity() const noexcept {
+    return m_Capacity;
+}
+
+bool MyString::operator==(const MyString& other) {
+    if (this->m_Size != other.m_Size) {
+        return false;
+    }
+
+    for (size_t i = 0; i < this->m_Size; ++i) {
+        if (this->m_Buffer[i] != other.m_Buffer[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+MyString MyString::operator+(const MyString& str1, const MyString& str2) const {
+    MyString result;
+
+    result.m_Size = this->m_Size + other.m_Size;
+    result.m_Capacity = result.m_Size + 1;
+    result.m_Buffer = new char[result.m_Capacity];
+    for (size_t i = 0; i < this->m_Size; ++i) {
+        result.m_Buffer[i] = this->at(i);
+    }
+
+    return result += other;
+}
+```
+
+### String Header file
+```cpp
+#ifndef MY_STRING_H
+#define MY_STRING_H
+#include <iostream>
+# include <fstream>
+# include <tuple>
+# include <limits>
+# include <stdexcept>
+
+class MyString {
+    private:
+        char* m_Buffer;
+        size_t m_Size;
+        size_t m_Capacity;
+    public:
+        MyString();
+        MyString(const char* string);
+
+        ~MyString();
+
+        MyString(const MyString& other);
+        MyString& operator=(const MyString& other);
+
+        void resize(size_t n);
+        size_t size() const;
+        size_t length() const;
+        const char* data() const;
+        bool empty() const;
+        const char& at(size_t pos) const;
+        const char& front() const;
+        void clear() noexcept;
+        size_t find(const MyString& str, size_t pos = 0) const noexcept;
+        size_t capacity() const noexcept;
+
+        MyString& operator+=(const MyString& other);
+        MyString operator+(const MyString& str1, const MyString& str2) const;
+        bool operator==(const MyString& other);
+        friend std::ostream& operator<<(std::ostream& stream, const MyString& string);
+
+};
+
+
+
+#endif
+```
