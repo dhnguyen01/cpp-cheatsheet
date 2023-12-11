@@ -574,3 +574,95 @@ future<int> fut =         // result of async function
 // do some other work 
 cout << fut.get();        // get result of async function. Wait if needed.
 ```
+
+## Recursive Function Example: Fibonacci Sequence
+
+The Fibonacci sequence is a series of numbers where each number is the sum of the two preceding ones, typically starting with 0 and 1. 
+This example demonstrates a simple recursive function in C++ to calculate the nth Fibonacci number.
+
+### Fibonacci Function Implementation in C++
+
+```cpp
+#include <iostream>
+
+// Function to calculate the nth Fibonacci number
+int fibonacci(int n) {
+    if (n <= 1) {
+        return n;
+    }
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int main() {
+    int n = 10; // Example: Calculate the 10th Fibonacci number
+    std::cout << "Fibonacci number at position " << n << " is: " << fibonacci(n) << std::endl;
+    return 0;
+}
+
+## Classes and Objects in C++
+
+C++ is an object-oriented programming language where the fundamental building blocks are classes and objects.
+A class defines a blueprint for an object, encapsulating data and the methods to manipulate that data.
+
+### Example Class: `Car`
+
+```cpp
+#include <iostream>
+#include <string>
+
+class Car {
+    std::string model;
+    int year;
+    double *engineTemperature;
+
+public:
+    // Default Constructor
+    Car() : model("Unknown"), year(0), engineTemperature(new double(0.0)) {}
+
+    // Parameterized Constructor
+    Car(std::string m, int y) : model(m), year(y), engineTemperature(new double(0.0)) {}
+
+    // Copy Constructor (Rule of Three)
+    Car(const Car& other) : model(other.model), year(other.year), engineTemperature(new double(*other.engineTemperature)) {}
+
+    // Copy Assignment Operator (Rule of Three)
+    Car& operator=(const Car& other) {
+        if (this != &other) {
+            model = other.model;
+            year = other.year;
+            *engineTemperature = *other.engineTemperature;
+        }
+        return *this;
+    }
+
+    // Destructor (Rule of Three)
+    ~Car() {
+        delete engineTemperature;
+    }
+
+    // Public Member Functions (Methods)
+    void setModel(std::string m) { model = m; }
+    std::string getModel() const { return model; }
+
+    void setYear(int y) { year = y; }
+    int getYear() const { return year; }
+
+    void updateEngineTemperature(double temp) { *engineTemperature = temp; }
+    double getEngineTemperature() const { return *engineTemperature; }
+
+    // Private Helper Function
+private:
+    void internalCheck() {
+        // Perform internal checks
+    }
+
+    // 'this' keyword example
+    void compareYear(const Car &otherCar) {
+        if (this->year == otherCar.year) {
+            std::cout << "Same year cars." << std::endl;
+        } else {
+            std::cout << "Different year cars." << std::endl;
+        }
+    }
+};
+
